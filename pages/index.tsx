@@ -5,21 +5,30 @@ import Intro from '../components/intro'
 import Layout from '../components/layout'
 import { getAllPosts } from '../lib/api'
 import Head from 'next/head'
-import { CMS_NAME } from '../lib/constants'
 import Post from '../types/post'
+import {useEffect, useState} from 'react'
+import { hasCookie } from 'cookies-next'
 
 type Props = {
   allPosts: Post[]
 }
 
 const Index = ({ allPosts }: Props) => {
+  const [loggedIn, setLoggedIn] = useState(false)
   const heroPost = allPosts[0]
   const morePosts = allPosts.slice(1)
+
+  useEffect(() => {
+    if (hasCookie('loggedIn')) {
+      setLoggedIn(true)
+    }
+  })
+
   return (
     <>
       <Layout>
         <Head>
-          <title>Next.js Blog Example with {CMS_NAME}</title>
+          <title>Next.js Blog Example with Zack</title>
         </Head>
         <Container>
           <Intro />
@@ -31,9 +40,11 @@ const Index = ({ allPosts }: Props) => {
               author={heroPost.author}
               slug={heroPost.slug}
               excerpt={heroPost.excerpt}
+              premium={heroPost.premium}
+              loggedIn={loggedIn}
             />
           )}
-          {morePosts.length > 0 && <MoreStories posts={morePosts} />}
+          {morePosts.length > 0 && <MoreStories posts={morePosts} loggedIn={loggedIn} />}
         </Container>
       </Layout>
     </>
@@ -50,6 +61,7 @@ export const getStaticProps = async () => {
     'author',
     'coverImage',
     'excerpt',
+    'premium'
   ])
 
   return {

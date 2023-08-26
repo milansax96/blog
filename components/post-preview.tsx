@@ -11,6 +11,8 @@ type Props = {
   excerpt: string
   author: Author
   slug: string
+  premium: string
+  loggedIn: boolean
 }
 
 const PostPreview = ({
@@ -20,16 +22,27 @@ const PostPreview = ({
   excerpt,
   author,
   slug,
+  premium,
+  loggedIn,
 }: Props) => {
+
   return (
     <div>
       <div className="mb-5">
-        <CoverImage slug={slug} title={title} src={coverImage} />
+        <CoverImage slug={slug} title={title} src={coverImage} loggedIn={loggedIn} premium={premium} />
       </div>
       <h3 className="text-3xl mb-3 leading-snug">
-        <Link as={`/posts/${slug}`} href="/posts/[slug]">
-          <a className="hover:underline">{title}</a>
-        </Link>
+        {(premium === 'false') ?
+          <Link as={`/posts/${slug}`} href="/posts/[slug]">
+            <a className="hover:underline">{title}</a>
+          </Link> : (loggedIn) ?
+            <Link as={`/posts/${slug}`} href="/posts/[slug]">
+              <a className="hover:underline">{title}</a>
+            </Link> :
+            <Link as={`/login`} href="/login">
+              <a className="hover:underline">{title}</a>
+            </Link>
+        }
       </h3>
       <div className="text-lg mb-4">
         <DateFormatter dateString={date} />
